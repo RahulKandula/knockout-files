@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Knockout intro</title>
+
+
+<script src="scripts/knockout-3.5.1.js" type="text/javascript"></script>
+<script src="scripts/jquery-3.6.3.js" type="text/javascript"></script>
+<script src="scripts/index.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+
+	$(function() {
+		var photopath = "images/";
+
+		// a class to create Product models
+		my.Product = function() {
+			this.id = ko.observable();
+			this.description = ko.observable();
+			this.price = ko.observable();
+			this.photo = ko.observable();
+			this.quantity = ko.observable();
+
+			this.photoUrl = ko.computed(function(){
+				return photopath + this.photo();
+			}, this);
+		};
+		
+		// view model
+		my.vm = {
+				product: ko.observable(new my.Product()
+					.id(1)
+					.description("a very new guitar")
+					.price(12)
+					.photo("guitar.png")
+					.quantity(1)
+				)
+		};
+		
+		// another way of binding computed
+		
+		my.vm.fullprice = ko.computed(function(){
+			return this.product() ? this.product().price() * this.product().quantity() : 0;
+		}, my.vm);
+		
+		ko.applyBindings(my.vm);
+
+	});
+
+
+</script>
+
+</head>
+<body>
+	<div>
+		<h3>Product :</h3><b><span data-bind="text: product().description"></span></b>
+		<br/>
+		<div>
+			Listed price: <i>Rs</i><input data-bind="value: product().price" size="3">
+			Quantity: <input data-bind="value: product().quantity" size="3">
+		</div>
+	</div>
+	
+	<div>
+		<h4>Final :</h4><hr><span data-bind="text: product().description"></span>
+		<br/>
+		<div>
+			<img data-bind="attr: {src:product().photoUrl, title:product().description}" length="120" width="120"/>
+		</div>
+		<div>
+			Listed price: <i>Rs </i><span data-bind="text: product().price"></span>
+			Quantity: <span data-bind="text: product().quantity"></span>
+		</div>
+		<div>
+			<b>Price you need to pay: <span data-bind="text: fullprice"></span></b>
+		</div>
+	</div>
+</body>
+</html>
